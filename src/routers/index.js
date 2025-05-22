@@ -2,9 +2,9 @@ import { Router } from "express";
 const router = Router();
 
 import { installRouter } from "./installRouter.js";
-// import { listRouter } from './listRouter.js';
-// import { cardRouter } from './cardRouter.js';
-// import { tagRouter } from './tagRouter.js';
+import { listRouter } from "./listRouter.js";
+import { cardRouter } from "./cardRouter.js";
+import { tagRouter } from "./tagRouter.js";
 
 router.use(installRouter);
 
@@ -14,8 +14,8 @@ router.get("/", (_req, res) => {
   });
 });
 
-// router.use(listRouter);
-// router.use(cardRouter);
-// router.use(tagRouter);
+router.use(listRouter);
+router.use(cardRouter);
+router.use(tagRouter);
 
 export { router };
