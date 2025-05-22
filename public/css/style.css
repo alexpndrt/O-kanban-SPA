@@ -1,0 +1,69 @@
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+main {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  column-gap: 1rem;
+}
+
+main > section {
+  height: min-content;
+}
+
+article:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.notifications {
+  position: absolute;
+  top: 0;
+  left: 25px;
+  color: white;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.alert {
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 250ms;
+}
+
+.success {
+  background-color: green;
+}
+
+.warning {
+  background-color: orange;
+}
+
+.danger {
+  background-color: red;
+}
+
+@media screen and (max-width: 768px) {
+  header h1 {
+    width: 100%;
+  }
+
+  header button {
+    width: 100%;
+  }
+}
+
+.handle {
+  padding: 0.5rem;
+}
+
+.handle:hover {
+  cursor: pointer;
+}
+
+.tag:hover {
+  cursor: pointer;
+}
