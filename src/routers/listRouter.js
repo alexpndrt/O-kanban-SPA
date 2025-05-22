@@ -1,30 +1,31 @@
-import { Router } from 'express';
+import { Router } from "express";
 const listRouter = Router();
 
-import validationMiddleware from '../middlewares/validation.middleware.js';
-import listCreateSchema from '../JoiSchemas/list.create.schema.js';
-import listUpdateSchema from '../JoiSchemas/list.update.schema.js';
+import validationMiddleware from "../middlewares/validation.middleware.js";
+import listCreateSchema from "../JoiSchemas/list.create.schema.js";
+import listUpdateSchema from "../JoiSchemas/list.update.schema.js";
 
-import { listController } from '../controllers/listController.js';
-import { isPositiveInt } from '../middlewares/validateInt.js';
+import { listController } from "../controllers/listController.js";
+import { isPositiveInt } from "../middlewares/validateInt.js";
 
 // ? API RESTful Representational State Transfer (CRUD)
 // ? index : retourne une liste de ressource
 
-listRouter.route('/lists')
-    .get(listController.index)
-    .post(validationMiddleware(listCreateSchema, 'body'), listController.store);
+listRouter
+  .route("/lists")
+  .get(listController.index)
+  .post(validationMiddleware(listCreateSchema, "body"), listController.store);
 
-listRouter.route('/lists/:id')
-    .all(isPositiveInt)
-    .get(listController.show)
-    .patch(validationMiddleware(listUpdateSchema, 'body'), listController.update)
-    .delete(listController.destroy);
+listRouter
+  .route("/lists/:id")
+  .all(isPositiveInt)
+  .get(listController.show)
+  .patch(validationMiddleware(listUpdateSchema, "body"), listController.update)
+  .delete(listController.destroy);
 
 // ? si on avait un formulaire à afficher qui servirait à créer un liste, on le renverrait avec cette route / méthode
 //  listRouter.get('/lists/create', listController.create);
 // ? store : permet de persister les données
-
 
 // ? La convention concernant le nommage des méthode pour mes api REST
 // Lire des données : index : GET
@@ -34,7 +35,6 @@ listRouter.route('/lists/:id')
 // Persister les données : store : POST
 // Mettre à jour une donnée : update : PATCH
 // Effacer une donnée : destroy : DELETE
-
 
 // get, post, patch, delete
 
