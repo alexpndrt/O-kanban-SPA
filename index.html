@@ -1,13 +1,378 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <!-- Meta -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Title -->
+    <title>oKanban</title>
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='24px' height='24px' stroke-width='1.5' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg' color='%23000000'%3E%3Cpath d='M3 3.6V20.4C3 20.7314 3.26863 21 3.6 21H20.4C20.7314 21 21 20.7314 21 20.4V3.6C21 3.26863 20.7314 3 20.4 3H3.6C3.26863 3 3 3.26863 3 3.6Z' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M6 6L6 16' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M10 6V9' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M14 6V13' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3Cpath d='M18 6V11' stroke='%23000000' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3C/path%3E%3C/svg%3E"
+    />
+
+    <!-- Bulma -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Custom CSS-->
+    <link rel="stylesheet" href="./assets/css/style.css" />
   </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+
+  <body class="container is-fluid my-6">
+    <div class="notifications"></div>
+
+    <header class="my-5">
+      <h1 class="title has-text-centered is-1">oKanban</h1>
+      <button class="button is-info is-outlined" id="add-list-button">
+        <i class="fas fa-plus mr-2"></i>Ajouter une liste
+      </button>
+      <div class="tags is-pulled-right">
+        <p>
+          <button class="button is-warning" id="addTagButton">
+            Ajouter un tag
+          </button>
+        </p>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <p class="has-text-info">Tags dispos en BDD :</p>
+        <!-- CODE html pour faire des espaces -->
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <!-- LES TAGS ICI -->
+      </div>
+    </header>
+
+    <main id="lists-container"></main>
+
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTML/Element/dialog#examples -->
+
+    <!-- Fenêtre de dialogue pour l'ajout de liste -->
+    <!-- Ajouter l'attribut 'open' ou appeler la méthode 'showModal()' pour voir le contenu -->
+    <dialog id="add-list-modal">
+      <div class="modal is-active">
+        <div class="modal-background close"></div>
+        <div class="modal-card">
+          <form>
+            <div class="modal-card-head">
+              <p class="modal-card-title">Ajouter une liste</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </div>
+
+            <div class="modal-card-body">
+              <label for="add-list-title" class="label">Titre</label>
+              <input
+                id="add-list-title"
+                class="input"
+                type="text"
+                name="title"
+                placeholder="Titre de la liste"
+              />
+            </div>
+
+            <div class="modal-card-foot">
+              <div class="buttons">
+                <button class="button is-success">Ajouter</button>
+                <button class="button close" type="button">Annuler</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Modal édition list -->
+    <dialog id="edit-list-modal" data-list-id="ID">
+      <div class="modal is-active">
+        <div class="modal-background close"></div>
+        <div class="modal-card">
+          <form>
+            <input type="hidden" type="number" name="list_id" />
+
+            <div class="modal-card-head">
+              <p class="modal-card-title">Editer la liste</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </div>
+
+            <div class="modal-card-body">
+              <label for="edit-list-title" class="label">Titre</label>
+              <input
+                id="edit-list-title"
+                class="input"
+                type="text"
+                name="title"
+                placeholder="Titre de la liste"
+              />
+            </div>
+
+            <div class="modal-card-foot">
+              <div class="buttons">
+                <button class="button is-success">Modifier</button>
+                <button class="button close" type="button">Annuler</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- CARDS -->
+
+    <!-- ADD CARD MODAL -->
+    <dialog id="add-card-modal">
+      <div class="modal is-active">
+        <div class="modal-background close"></div>
+        <div class="modal-card">
+          <form>
+            <input type="hidden" name="list_id" />
+            <div class="modal-card-head">
+              <p class="modal-card-title">Ajouter une carte</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </div>
+
+            <div class="modal-card-body">
+              <label for="add-card-content" class="label">Contenu</label>
+              <input
+                id="add-card-content"
+                class="input"
+                type="text"
+                name="content"
+                placeholder="Contenu de la carte"
+              />
+              <label class="label">Couleur</label>
+              <input
+                type="color"
+                class="input"
+                name="color"
+                value=""
+                placeholder="Nom de la carte"
+              />
+            </div>
+
+            <div class="modal-card-foot">
+              <div class="buttons">
+                <button class="button is-success">Ajouter</button>
+                <button class="button close" type="button">Annuler</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- END ADD CARD MODAL -->
+
+    <!-- EDIT MODAL -->
+    <dialog id="edit-card-modal">
+      <div class="modal is-active">
+        <div class="modal-background close"></div>
+        <div class="modal-card">
+          <form>
+            <input type="hidden" name="list_id" />
+            <input type="hidden" name="card_id" />
+            <div class="modal-card-head">
+              <p class="modal-card-title">Ajouter une carte</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </div>
+
+            <div class="modal-card-body">
+              <label for="add-card-content" class="label">Contenu</label>
+
+              <input
+                id="add-card-content"
+                class="input"
+                type="text"
+                name="content"
+                placeholder="Contenu de la carte"
+              />
+
+              <label class="label">Couleur</label>
+              <input
+                type="color"
+                class="input"
+                name="color"
+                value=""
+                placeholder="Nom de la carte"
+              />
+            </div>
+
+            <div class="modal-card-foot">
+              <div class="buttons">
+                <button class="button is-success">Ajouter</button>
+                <button class="button close" type="button">Annuler</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </dialog>
+    <!-- END EDIT CARD MODAL -->
+
+    <!-- ADD TAG MODAL -->
+    <dialog id="addTagModal">
+      <div class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <form method="POST">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Ajouter un tag</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </header>
+            <section class="modal-card-body">
+              <div class="field">
+                <label class="label">Nom du tag</label>
+                <div class="control">
+                  <!-- "name=title pour correspondre à notre API" -->
+                  <input
+                    type="text"
+                    class="input"
+                    name="name"
+                    value=""
+                    placeholder="Nom du tag"
+                  />
+                </div>
+              </div>
+              <label class="label">Couleur</label>
+              <div class="control">
+                <!-- "name=content pour correspondre à notre API" -->
+                <input
+                  type="color"
+                  class="input"
+                  name="color"
+                  value=""
+                  placeholder="Nom de la carte"
+                />
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button class="button is-success">Save changes</button>
+              <button class="button close" type="button">Cancel</button>
+            </footer>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- END TAG MODAL -->
+
+    <!-- ASSOCIATE TAG MODAL -->
+    <dialog id="associateTagModal">
+      <div class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+          <form method="POST">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Associer la carte avec un tag</p>
+              <button
+                class="delete close"
+                type="button"
+                aria-label="close"
+              ></button>
+            </header>
+            <section class="modal-card-body">
+              <div class="field">
+                <!-- input pour l'ID de la liste à laquelle appartient la carte-->
+                <input type="hidden" name="card_id" value="" />
+
+                <label class="label" for="tag_id">Choisissez un tag</label>
+                <div class="control">
+                  <select name="tag_id" id="tag_id">
+                    <!-- OPTIONS ICI -->
+                  </select>
+                </div>
+              </div>
+            </section>
+            <footer class="modal-card-foot">
+              <button class="button is-success">Save changes</button>
+              <button class="button close" type="button">Cancel</button>
+            </footer>
+          </form>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- Template pour une liste -->
+    <template id="list-template">
+      <section class="message is-primary">
+        <header class="message-header">
+          <i class="fas fa-arrows-alt handle"></i>
+          <h2>TITRE_DE_LA_LISTE</h2>
+
+          <aside>
+            <span class="icon is-clickable js-edit-list-btn has-text-warning"
+              ><i class="fas fa-pencil-alt"></i
+            ></span>
+            <span class="icon is-clickable has-text-secondary js-add-card-btn"
+              ><i class="fas fa-plus"></i
+            ></span>
+            <span class="icon is-clickable js-delete-list-btn has-text-danger"
+              ><i class="fas fa-trash-alt"></i
+            ></span>
+          </aside>
+        </header>
+
+        <section class="message-body js-cards-container">
+          <!-- Cards go here -->
+        </section>
+      </section>
+    </template>
+
+    <!-- Template pour une carte -->
+    <template id="card-template">
+      <article class="card" data-card-id="ID">
+        <header class="card-header">
+          <h3 class="card-header-title has-text-weight-medium">
+            CONTENU_DE_LA_CARTE
+          </h3>
+          <aside class="card-header-icon">
+            <span class="icon has-text-success"
+              ><i class="fas fa-pencil-alt"></i
+            ></span>
+            <span class="icon has-text-danger ml-2"
+              ><i class="fas fa-trash-alt"></i
+            ></span>
+            <span class="icon has-text-success ml-2 js-associate-tag"
+              ><i class="fas fa-tag"></i
+            ></span>
+          </aside>
+        </header>
+      </article>
+    </template>
+
+    <template id="tag-template">
+      <div class="tag">text</div>
+    </template>
+
+    <!-- Custom JS -->
+    <script type="module" src="./assets/js/index.js"></script>
   </body>
 </html>
