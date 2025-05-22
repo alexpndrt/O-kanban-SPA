@@ -1,0 +1,10 @@
+%%mocodo
+:
+LISTE: code_liste, titre, position
+:
+CARTE: code_carte, contenu, position, couleur, #code_liste > LISTE > code_liste
+:
+CARACTÉRISER: #code_carte > CARTE > code_carte, _#code_label > LABEL > code_label
+:
+LABEL: code_label, nom, couleur
+:
