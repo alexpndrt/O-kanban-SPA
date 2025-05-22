@@ -10,7 +10,7 @@ router.use(installRouter);
 
 router.get("/", (_req, res) => {
   res.sendFile("index.html", {
-    root: "",
+    root: "../../dist",
   });
 });
 
